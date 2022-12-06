@@ -3,27 +3,74 @@
 namespace Madmatt\Funnelback\Tests;
 
 use Madmatt\Funnelback\SearchService;
-use PHPUnit\Framework\TestCase;
+use SilverStripe\Core\Injector\Injector;
+use Madmatt\Funnelback\Fakes\SearchGatewayFake;
+use Madmatt\Funnelback\SearchGateway;
+use SilverStripe\Dev\FunctionalTest;
 
-class SearchServiceTest extends TestCase
+class SearchServiceTest extends FunctionalTest
 {
+    /**
+     * Undocumented variable
+     *
+     * @var SearchGatewayFake
+     */
+    private $fakeGateWay;
+
     public function setUp(): void
     {
         parent::setUp();
-//        Injector::inst()->registerService(new SearchGatewayFake(), SearchGateway::class);
+        $this->fakeGateWay = new SearchGatewayFake();
+        Injector::inst()->registerService($this->fakeGateWay, SearchGateway::class);
     }
 
-    public function testSearch(): void
-    {
-        $this->markTestIncomplete();
-//        /** @var SearchService $service */
-//        $service = Injector::inst()->get(SearchService::class);
-//        $service->search('test');
-    }
 
-    public function testSearchPresentsHtmlResultsDifferentlyToFileResults(): void
+    /**
+     * Test that the service service formats the results into the format required by the front end.
+     * Non-html file types should have file size be part of the title.
+     *
+     * @return void
+     */
+    public function testSearchFormatResultsCorrectly(): void
     {
-        $this->markTestIncomplete();
+        $mockWebPageResult =  [
+            'fileType' => 'html',
+            'title' => 'COVID-19',
+            'fileSize' => 52162,
+            'liveUrl' => 'test url 1',
+            'summary' => 'fake summary 1'
+        ];
+        $mockPdfResult = [
+            'fileType' => 'pdf',
+            'title' => 'COVID-29',
+            'fileSize' => 62162,
+            'liveUrl' => 'test url 2',
+            'summary' => 'fake summary 2'
+        ];
+        $this->fakeGateWay->setReturnedResults([
+            'results' => [
+                $mockWebPageResult,
+                $mockPdfResult
+            ],
+            'resultsSummary' => ['totalMatching' => 5]
+        ]);
+
+        $service = Injector::inst()->get(SearchService::class);
+        $list = $service->search('test');
+
+        $this->assertSame([
+            'Link' => 'test url 1',
+            'Title' => 'COVID-19',
+            'Summary' => 'fake summary 1',
+            'FileType' => 'html'
+        ], $list[0]);
+
+        $this->assertSame([
+            'Link' => 'test url 2',
+            'Title' => 'COVID-29 (PDF 61KB)',
+            'Summary' => 'fake summary 2',
+            'FileType' => 'pdf'
+        ], $list[1]);
     }
 
     public function testFormatFileTitle(): void
@@ -73,7 +120,7 @@ class SearchServiceTest extends TestCase
 
     private function invokeMethod(string $className, string $methodName, array $args = []): mixed
     {
-        $object = new $className;
+        $object = new $className();
         $reflectionClass = new \ReflectionClass($className);
         $method = $reflectionClass->getMethod($methodName);
         $method->setAccessible(true);

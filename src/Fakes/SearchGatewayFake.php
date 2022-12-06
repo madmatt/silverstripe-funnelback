@@ -1,6 +1,6 @@
 <?php
 
-namespace Madmatt\Funnelback\Tests\Fakes;
+namespace Madmatt\Funnelback\Fakes;
 
 use Madmatt\Funnelback\SearchGateway;
 
