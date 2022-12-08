@@ -52,6 +52,8 @@ Create a new controller for your search page - `app/src/Controllers/SearchContro
 namespace App\Controllers;
 
 use Madmatt\Funnelback\SearchService;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\ORM\FieldType\DBField;
 
 class SearchController extends \PageController
 {
@@ -70,7 +72,7 @@ class SearchController extends \PageController
         // Otherwise, don't bother performing an empty search.
         if ($keyword) {
             return [
-                'Query' => DBField::create_field('Varchar', $keyword)
+                'Query' => DBField::create_field('Varchar', $keyword),
                 'Results' => $this->searchService->search($keyword, $start),
             ];
         } else {
