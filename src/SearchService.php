@@ -118,7 +118,7 @@ class SearchService
     {
         $path = parse_url($url)['path'];
         //removes 'assets', since File::find does not expect it to be there
-        $path = str_replace(ASSETS_DIR . '/', '', $path);
+        $path = preg_replace('/' . ASSETS_DIR . '\//', '', $path, 1);
 
         return File::find($path);
     }
