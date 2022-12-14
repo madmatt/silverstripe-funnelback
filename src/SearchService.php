@@ -116,13 +116,10 @@ class SearchService
      */
     private function getFileFromURL(string $url): ?File
     {
-        //this also removes 'assets' from the path, since File::find does not expect it to be there
-        $parts =   array_filter(preg_split("#[/\\\\]+#", $url ?? '') ?? []);
-        unset($parts[0]);
-        unset($parts[1]);
-        unset($parts[2]);
-        $filePath = implode('/', $parts);
+        $path = parse_url($url)['path'];
+        //removes 'assets', since File::find does not expect it to be there
+        $path = str_replace(ASSETS_DIR . '/', '', $path);
 
-        return File::find($filePath);
+        return File::find($path);
     }
 }
