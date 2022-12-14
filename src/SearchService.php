@@ -2,6 +2,7 @@
 
 namespace Madmatt\Funnelback;
 
+use SilverStripe\Assets\File;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\ORM\ArrayList;
@@ -42,7 +43,12 @@ class SearchService
 
                 // If the file is anything but HTML, then it's downloadable. Ensure we append the file type and file size to the end
                 if ($fileType != self::FILE_TYPE_HTML) {
-                    $title = $this->formatFileTitle($title, $fileType, $result['fileSize']);
+                    $file = $this->getFileFromURL($result['indexUrl']);
+                    $title = $this->formatFileTitle(
+                        $file ? $file->Title : 'File Not Found',
+                        $fileType,
+                        $result['fileSize']
+                    );
                 }
 
                 $list->push([
@@ -98,5 +104,22 @@ class SearchService
         $fileSizeBytes /= pow(1024, $prefixIndex);
 
         return round($fileSizeBytes, 0) . $units[$prefixIndex];
+    }
+
+    /**
+     * The functions takes in a full url (including protocol) and tries to find a
+     * matching file in the assets folder
+     *
+     *
+     * @param string $url
+     * @return File|null
+     */
+    private function getFileFromURL(string $url): ?File
+    {
+        $path = parse_url($url)['path'];
+        //removes 'assets', since File::find does not expect it to be there
+        $path = preg_replace('/' . ASSETS_DIR . '\//', '', $path, 1);
+
+        return File::find($path);
     }
 }
