@@ -45,7 +45,7 @@ class SearchService
                 if ($fileType != self::FILE_TYPE_HTML) {
                     $file = $this->getFileFromURL($result['indexUrl']);
                     $title = $this->formatFileTitle(
-                        !$file ? 'File Not Found' : $file->Title,
+                        $file ? $file->Title : 'File Not Found',
                         $fileType,
                         $result['fileSize']
                     );
@@ -116,6 +116,7 @@ class SearchService
      */
     private function getFileFromURL(string $url): ?File
     {
+        //this also removes 'assets' from the path, since File::find does not expect it to be there
         $parts =   array_filter(preg_split("#[/\\\\]+#", $url ?? '') ?? []);
         unset($parts[0]);
         unset($parts[1]);
