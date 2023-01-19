@@ -16,7 +16,7 @@ You can see this module in action on the [Whaikaha - Ministry of Disabled People
 
 ### What this module won't try to do
 - Index content into a Funnelback collection. Instead, use the [silverstripe-search-service module](https://github.com/silverstripe/silverstripe-search-service)
-and add your own [Funnelback search service](https://github.com/silverstripe/silverstripe-search-service/blob/2/docs/en/customising_add_search_service.md).
+and add your own [Funnelback search service](https://github.com/silverstripe/silverstripe-search-service/blob/2/docs/en/customising_add_search_service.md), OR have Funnelback crawl your website directly.
 
 ## Installation
 Install this module via Composer:
