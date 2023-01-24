@@ -55,6 +55,9 @@ use Madmatt\Funnelback\SearchService;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\ORM\FieldType\DBField;
 
+use SilverStripe\View\ArrayData;
+use SilverStripe\ORM\ArrayList;
+
 class SearchController extends \PageController
 {
     private static $dependencies = [
@@ -67,14 +70,19 @@ class SearchController extends \PageController
     {
         $keyword = $request->getVar('q');
         $start = $request->getVar('start') ?? 0;
+        $limit = $request->getVar('limit') ?? 10;
+        $sort = $request->getVar('sort') ?? "Default";      /* Sort by title and dtitle */
 
         // If a keyword has been supplied, perform a search and return the results.
         // Otherwise, don't bother performing an empty search.
         if ($keyword) {
-            return [
-                'Query' => DBField::create_field('Varchar', $keyword),
-                'Results' => $this->searchService->search($keyword, $start),
-            ];
+            return $this->customise([
+                'Layout' => $this->customise(
+                    [
+                        'Query' => DBField::create_field('Varchar', $keyword),
+                        'Results' => $this->searchService->search($keyword, $start, $limit, $sort),
+                    ])->renderWith('App/Search/Layout/Search')
+            ])->renderWith(['Page']);
         } else {
             return [];
         }

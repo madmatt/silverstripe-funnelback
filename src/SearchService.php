@@ -17,7 +17,7 @@ class SearchService
 
     public const FILE_TYPE_HTML = 'html';
 
-    public function search(string $keyword = "", int $start = 0, int $limit = 10): ?PaginatedList
+    public function search(string $keyword = "", int $start = 0, int $limit = 10, string $sort = ""): ?PaginatedList
     {
         // Short circuit - if no keyword is entered, don't bother searching
         if (!$keyword) {
@@ -27,7 +27,7 @@ class SearchService
         // Fetch results from the gateway and convert them into a standard Silverstripe ArrayList
         try {
             $gateway = SearchGateway::create();
-            $data = $gateway->getResults($keyword, $start, $limit);
+            $data = $gateway->getResults($keyword, $start, $limit, $sort);
 
             if (!$data || !isset($data['results']) || !isset($data['resultsSummary'])) {
                 return null;
