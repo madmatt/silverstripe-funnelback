@@ -44,12 +44,6 @@ class SearchGateway
         }
     }
 
-    protected function init()
-    {
-        $this->logger->debug("Searchgateway::init() called");
-        $this->logger->init();
-    }
-
     public function setLogger(LoggerInterface $logger): self
     {
         $this->logger = $logger;
