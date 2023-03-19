@@ -73,7 +73,6 @@ class SearchGateway
                 'start_rank' => $start,
                 'num_ranks' => $limit,
                 'sort' => $sort,
-                'tweak' => 'on'
             ];
             
             $response = $this->client->request('GET', '/s/search.json', [
