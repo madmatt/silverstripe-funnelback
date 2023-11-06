@@ -7,8 +7,7 @@
     "require": {
         "php": "^8",
         "guzzlehttp/guzzle": "^7.4",
-        "silverstripe/config": "^1",
-        "silverstripe/framework": "^4.10"
+        "silverstripe/framework": "^4.10 || ^5"
     },
 
     "require-dev": {
