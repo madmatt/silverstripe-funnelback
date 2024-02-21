@@ -106,8 +106,6 @@ class SearchGateway
 
             return $decoded['response']['resultPacket'] ?? [];
         } catch (Exception $e) {
-            var_dump($e->getMessage());
-
             $this->logger->notice($message = "Exception: " . $e->getMessage());
             throw new Exception($message);
         }
